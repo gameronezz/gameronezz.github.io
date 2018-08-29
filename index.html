@@ -5,17 +5,20 @@
   
 
   
-  <title>Onez的个人博客</title>
+  <title>Onez的游戏开发笔记</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Onez的个人博客">
+  <meta name="description" content="Have a good life">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Onez的游戏开发笔记">
 <meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="Onez的个人博客">
+<meta property="og:site_name" content="Onez的游戏开发笔记">
+<meta property="og:description" content="Have a good life">
 <meta property="og:locale" content="default">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Onez的个人博客">
+<meta name="twitter:title" content="Onez的游戏开发笔记">
+<meta name="twitter:description" content="Have a good life">
   
-    <link rel="alternate" href="/atom.xml" title="Onez的个人博客" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="Onez的游戏开发笔记" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -34,7 +37,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">Onez的个人博客</a>
+        <a href="/" id="logo">Onez的游戏开发笔记</a>
       </h1>
       
     </div>
@@ -104,24 +107,10 @@
 <ol>
 <li><p>LuaJIT命令行选项 -b[options] input output</p>
 <p> -b 这个选项用于保存和列出字节码, 并且可以接受以下一些叠加选项</p>
-<pre><code>-1 — Only list bytecode.
--s — Strip debug info (this is the default).
--g — Keep debug info.
--n name — Set module name (default: auto-detect from input name)
--t type — Set output file type (default: auto-detect from output name).
--a arch — Override architecture for object files (default: native).
--o os — Override OS for object files (default: native).
--e chunk — Use chunk string as input.
-- (a single minus sign) — Use stdin as input and/or stdout as output.
-</code></pre></li>
-</ol>
-<pre><code>输出文件类型是从输出文件名的拓展类型中自动得到的
-
-   c — C source file, exported bytecode data.
-   h — C header file, static bytecode data.
-   obj or o — Object file, exported bytecode data (OS- and architecture-specific).
-   raw or any other extension — Raw bytecode file (portable). 
-</code></pre><ol start="2">
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">-1 — Only list bytecode.</span><br><span class="line">-s — Strip debug info (this is the default).</span><br><span class="line">-g — Keep debug info.</span><br><span class="line">-n name — Set module name (default: auto-detect from input name)</span><br><span class="line">-t type — Set output file type (default: auto-detect from output name).</span><br><span class="line">-a arch — Override architecture for object files (default: native).</span><br><span class="line">-o os — Override OS for object files (default: native).</span><br><span class="line">-e chunk — Use chunk string as input.</span><br><span class="line">- (a single minus sign) — Use stdin as input and/or stdout as output.</span><br><span class="line">	</span><br></pre></td></tr></table></figure>
+<p> 输出文件类型是从输出文件名的拓展类型中自动获取的</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">c — C source file, exported bytecode data.</span><br><span class="line">h — C header file, static bytecode data.</span><br><span class="line">obj or o — Object file, exported bytecode data (OS- and architecture-specific).</span><br><span class="line">raw or any other extension — Raw bytecode file (portable). </span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+</li>
 <li><p>Notes：</p>
 <ol>
 <li>请参阅string.dump()来获取字节码的可移植性和兼容性的信息。</li>

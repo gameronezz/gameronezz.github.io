@@ -5,21 +5,21 @@
   
 
   
-  <title>移动平台上使用LuaJIT字节码 | Onez的个人博客</title>
+  <title>移动平台上使用LuaJIT字节码 | Onez的游戏开发笔记</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="早就听闻LuaJIT字节码有很好的代码保护措施，而且还可以加快代码的加载速度，趁着项目中期不太忙的时候，抽空做看了一下LuaJIT如何使用字节码。 顺便吐槽一下，公司之前那么多cocos项目，居然一个使用字节码的都没有，很好奇他们的项目是怎么做的客户端加密，哈哈。 我们项目是Unity3d项目，使用的xLua做热更方案。不过字节码这一块跟使用什么框架没有关系，官方文档说，字节码（bytecode）">
 <meta property="og:type" content="article">
 <meta property="og:title" content="移动平台上使用LuaJIT字节码">
 <meta property="og:url" content="http://yoursite.com/2018/08/29/移动平台上使用LuaJIT字节码/index.html">
-<meta property="og:site_name" content="Onez的个人博客">
+<meta property="og:site_name" content="Onez的游戏开发笔记">
 <meta property="og:description" content="早就听闻LuaJIT字节码有很好的代码保护措施，而且还可以加快代码的加载速度，趁着项目中期不太忙的时候，抽空做看了一下LuaJIT如何使用字节码。 顺便吐槽一下，公司之前那么多cocos项目，居然一个使用字节码的都没有，很好奇他们的项目是怎么做的客户端加密，哈哈。 我们项目是Unity3d项目，使用的xLua做热更方案。不过字节码这一块跟使用什么框架没有关系，官方文档说，字节码（bytecode）">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-29T15:43:43.309Z">
+<meta property="og:updated_time" content="2018-08-29T16:26:42.635Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="移动平台上使用LuaJIT字节码">
 <meta name="twitter:description" content="早就听闻LuaJIT字节码有很好的代码保护措施，而且还可以加快代码的加载速度，趁着项目中期不太忙的时候，抽空做看了一下LuaJIT如何使用字节码。 顺便吐槽一下，公司之前那么多cocos项目，居然一个使用字节码的都没有，很好奇他们的项目是怎么做的客户端加密，哈哈。 我们项目是Unity3d项目，使用的xLua做热更方案。不过字节码这一块跟使用什么框架没有关系，官方文档说，字节码（bytecode）">
   
-    <link rel="alternate" href="/atom.xml" title="Onez的个人博客" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="Onez的游戏开发笔记" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -38,7 +38,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">Onez的个人博客</a>
+        <a href="/" id="logo">Onez的游戏开发笔记</a>
       </h1>
       
     </div>
@@ -106,24 +106,10 @@
 <ol>
 <li><p>LuaJIT命令行选项 -b[options] input output</p>
 <p> -b 这个选项用于保存和列出字节码, 并且可以接受以下一些叠加选项</p>
-<pre><code>-1 — Only list bytecode.
--s — Strip debug info (this is the default).
--g — Keep debug info.
--n name — Set module name (default: auto-detect from input name)
--t type — Set output file type (default: auto-detect from output name).
--a arch — Override architecture for object files (default: native).
--o os — Override OS for object files (default: native).
--e chunk — Use chunk string as input.
-- (a single minus sign) — Use stdin as input and/or stdout as output.
-</code></pre></li>
-</ol>
-<pre><code>输出文件类型是从输出文件名的拓展类型中自动得到的
-
-   c — C source file, exported bytecode data.
-   h — C header file, static bytecode data.
-   obj or o — Object file, exported bytecode data (OS- and architecture-specific).
-   raw or any other extension — Raw bytecode file (portable). 
-</code></pre><ol start="2">
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">-1 — Only list bytecode.</span><br><span class="line">-s — Strip debug info (this is the default).</span><br><span class="line">-g — Keep debug info.</span><br><span class="line">-n name — Set module name (default: auto-detect from input name)</span><br><span class="line">-t type — Set output file type (default: auto-detect from output name).</span><br><span class="line">-a arch — Override architecture for object files (default: native).</span><br><span class="line">-o os — Override OS for object files (default: native).</span><br><span class="line">-e chunk — Use chunk string as input.</span><br><span class="line">- (a single minus sign) — Use stdin as input and/or stdout as output.</span><br><span class="line">	</span><br></pre></td></tr></table></figure>
+<p> 输出文件类型是从输出文件名的拓展类型中自动获取的</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">c — C source file, exported bytecode data.</span><br><span class="line">h — C header file, static bytecode data.</span><br><span class="line">obj or o — Object file, exported bytecode data (OS- and architecture-specific).</span><br><span class="line">raw or any other extension — Raw bytecode file (portable). </span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+</li>
 <li><p>Notes：</p>
 <ol>
 <li>请参阅string.dump()来获取字节码的可移植性和兼容性的信息。</li>
