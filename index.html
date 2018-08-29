@@ -5,17 +5,17 @@
   
 
   
-  <title>Hexo</title>
+  <title>Onez的个人博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
+<meta property="og:title" content="Onez的个人博客">
 <meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="Onez的个人博客">
 <meta property="og:locale" content="default">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="Onez的个人博客">
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="Onez的个人博客" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -34,7 +34,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
+        <a href="/" id="logo">Onez的个人博客</a>
       </h1>
       
     </div>
@@ -84,9 +84,12 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h4 id="在桌面平台编译移动平台上使用LuaJIT字节码"><a href="#在桌面平台编译移动平台上使用LuaJIT字节码" class="headerlink" title="在桌面平台编译移动平台上使用LuaJIT字节码"></a>在桌面平台编译移动平台上使用LuaJIT字节码</h4><p> LuaJIT支持交叉编译，即在mac osx上编译出ios或android上系统可执行的字节码，如此，我们只需要针对32和64位的LuaJIT解释器分别编译一次，然后在打包过程中使用LuaJIT解释器将项目中的Lua源码编译成字节码即可。</p>
-<p> LuaJIT字节码有平台兼容性的问题，如果需要兼容iphone 5s及以下32位平台的用户，则需要针对32位/64位各生成一套字节码。</p>
-<p> 如下给出一套在桌面平台生成移动平台上可用的字节码的流程。</p>
+        <p>早就听闻LuaJIT字节码有很好的代码保护措施，而且还可以加快代码的加载速度，趁着项目中期不太忙的时候，抽空做看了一下LuaJIT如何使用字节码。</p>
+<p>顺便吐槽一下，公司之前那么多cocos项目，居然一个使用字节码的都没有，很好奇他们的项目是怎么做的客户端加密，哈哈。</p>
+<p>我们项目是Unity3d项目，使用的xLua做热更方案。不过字节码这一块跟使用什么框架没有关系，官方文档说，字节码（bytecode）和源码（sourcecode）在使用上是没有区别的。所以不考虑32位移动平台的话，在框架和业务层面无需改动任何东西。</p>
+<h1 id="HOW"><a href="#HOW" class="headerlink" title="HOW"></a>HOW</h1><p>LuaJIT支持交叉编译，即在mac osx上编译出ios或android上系统可执行的字节码，如此，我们只需要针对32和64位的LuaJIT解释器分别编译一次，然后在打包过程中使用LuaJIT解释器将项目中的Lua源码编译成字节码即可。</p>
+<p>LuaJIT字节码有平台兼容性的问题，如果需要兼容iphone 5s及以下32位平台的用户，则需要针对32位/64位各生成一套字节码。</p>
+<p>如下给出一套在桌面平台生成移动平台上可用的字节码的流程。</p>
 <h5 id="1-重新编译LuaJIT解释器"><a href="#1-重新编译LuaJIT解释器" class="headerlink" title="1. 重新编译LuaJIT解释器"></a>1. 重新编译LuaJIT解释器</h5><p> LuaJIT默认生成的字节码是32位的，如果在64位的ios机器上直接读取的话，会一个报错。针对这个种情况，而作者在2015年8月对LuaJIT做了一个<a href="https://github.com/LuaJIT/LuaJIT/issues/25" target="_blank" rel="noopener">更新</a>，增加了LJ_GC64模式，这样我们可以重新编译LuaJIT解释器来生成64位的字节码。</p>
 <p>过程很简单，只需要在 make 命令后加上一个参数即可。如下是mac os上编译LuaJIT解释器的命令。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 控制台定位到LuaJIT解释器所在目录</span><br><span class="line">cd LuaJIT-2.1.0-beta2</span><br><span class="line"></span><br><span class="line">// 编译 32 位 LuaJIT 解释器  </span><br><span class="line">make </span><br><span class="line"></span><br><span class="line">// 编译 64 位 LuaJIT 解释器</span><br><span class="line">make CFLAGS=-DLUAJIT_ENABLE_GC6</span><br></pre></td></tr></table></figure>
@@ -101,7 +104,7 @@
 <ol>
 <li><p>LuaJIT命令行选项 -b[options] input output</p>
 <p> -b 这个选项用于保存和列出字节码, 并且可以接受以下一些叠加选项</p>
-<pre><code> -1 — Only list bytecode.
+<pre><code>-1 — Only list bytecode.
 -s — Strip debug info (this is the default).
 -g — Keep debug info.
 -n name — Set module name (default: auto-detect from input name)
@@ -114,7 +117,7 @@
 </ol>
 <pre><code>输出文件类型是从输出文件名的拓展类型中自动得到的
 
-    c — C source file, exported bytecode data.
+   c — C source file, exported bytecode data.
    h — C header file, static bytecode data.
    obj or o — Object file, exported bytecode data (OS- and architecture-specific).
    raw or any other extension — Raw bytecode file (portable). 
