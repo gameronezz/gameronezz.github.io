@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>安卓上为什么不能运行64位LuaJIT字节码 | Onez的游戏开发笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="安卓上为什么不能运行64位LuaJIT字节码今天在测试安卓下是否可以运行64位的LuaJIT字节码时出现了一个报错。错误说加载了错误格式的字节码，而32位的字节码可以正常运行。这就很纳闷了，为啥64位的安卓应用依然只能读取32位的字节码呢？ 仔细查阅了一下以后发现，苹果在15年强制新提交的应用必须支持64位之后，Unity紧赶慢赶的在4.6.2以上的版本增加了对IOS64位的支持，但是Unity官">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安卓上为什么不能运行64位LuaJIT字节码">
+<meta property="og:url" content="http://yoursite.com/2018/09/04/安卓上为什么不能运行64位LuaJIT字节码/index.html">
+<meta property="og:site_name" content="Onez的游戏开发笔记">
+<meta property="og:description" content="安卓上为什么不能运行64位LuaJIT字节码今天在测试安卓下是否可以运行64位的LuaJIT字节码时出现了一个报错。错误说加载了错误格式的字节码，而32位的字节码可以正常运行。这就很纳闷了，为啥64位的安卓应用依然只能读取32位的字节码呢？ 仔细查阅了一下以后发现，苹果在15年强制新提交的应用必须支持64位之后，Unity紧赶慢赶的在4.6.2以上的版本增加了对IOS64位的支持，但是Unity官">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-09-03T17:33:58.657Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="安卓上为什么不能运行64位LuaJIT字节码">
+<meta name="twitter:description" content="安卓上为什么不能运行64位LuaJIT字节码今天在测试安卓下是否可以运行64位的LuaJIT字节码时出现了一个报错。错误说加载了错误格式的字节码，而32位的字节码可以正常运行。这就很纳闷了，为啥64位的安卓应用依然只能读取32位的字节码呢？ 仔细查阅了一下以后发现，苹果在15年强制新提交的应用必须支持64位之后，Unity紧赶慢赶的在4.6.2以上的版本增加了对IOS64位的支持，但是Unity官">
+  
+    <link rel="alternate" href="/atom.xml" title="Onez的游戏开发笔记" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Onez的游戏开发笔记</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-安卓上为什么不能运行64位LuaJIT字节码" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/04/安卓上为什么不能运行64位LuaJIT字节码/" class="article-date">
+  <time datetime="2018-09-03T17:32:29.000Z" itemprop="datePublished">2018-09-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      安卓上为什么不能运行64位LuaJIT字节码
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="安卓上为什么不能运行64位LuaJIT字节码"><a href="#安卓上为什么不能运行64位LuaJIT字节码" class="headerlink" title="安卓上为什么不能运行64位LuaJIT字节码"></a>安卓上为什么不能运行64位LuaJIT字节码</h3><p>今天在测试安卓下是否可以运行64位的LuaJIT字节码时出现了一个报错。错误说加载了错误格式的字节码，而32位的字节码可以正常运行。这就很纳闷了，为啥64位的安卓应用依然只能读取32位的字节码呢？</p>
+<p>仔细查阅了一下以后发现，苹果在15年强制新提交的应用必须支持64位之后，Unity紧赶慢赶的在4.6.2以上的版本增加了对IOS64位的支持，但是Unity官方对于64位安卓应用的构建遥遥无期，一方面64位Android可以良好的兼容32位应用，再一个谷歌也没有强行的去推进这件事情，所以目前绝大多数的安卓应用还是32位的。</p>
+<p>那么Unity目前在安卓上是否支持64位的应用呢，在官方文档中，我没有找到直接的描述，只是在Android Build Setting中找到了一个Device filer字段，它可以控制构建应用所支持的CPU架构。Device filer 支持x86/armv7/FAT(x86+armv7)这三种选项（这可能也是为什么xLua构建安卓库的时候只会构建出x86和armabi-v7a两个架构的.so文件，因为Unity就只支持这两个目标架构，=。= 纯属猜测），从选项就可以看出来，在2017.4之前，Unity是不支持构建64位安卓应用的。</p>
+<p>不过在<a href="https://docs.unity3d.com/2017.3/Documentation/Manual/class-PlayerSettingsAndroid.html" target="_blank" rel="noopener">2017.4的官方文档</a>中,增加了Target Architectures这个属性配置，它增加了arm64的构建选项，不过在2017.4这个版本，该字段还处于实验性质。Target Architectures在Unity2018中已经可以正式使用了，这代表着我们终于可以在Unity中构建64位的安卓应用了。</p>
+<h4 id="拓展阅读：Unity-Android-Plugin-目录下为什么会有那么多文件夹-有空对这一部分的内容做整理"><a href="#拓展阅读：Unity-Android-Plugin-目录下为什么会有那么多文件夹-有空对这一部分的内容做整理" class="headerlink" title="拓展阅读：Unity Android Plugin 目录下为什么会有那么多文件夹(有空对这一部分的内容做整理)"></a>拓展阅读：Unity Android Plugin 目录下为什么会有那么多文件夹(有空对这一部分的内容做整理)</h4><p><a href="https://blog.csdn.net/nongminkouhao/article/details/81048857" target="_blank" rel="noopener">具体项目中如何适配安卓.so库的</a></p>
+<p>在不考虑包体的情况下，适配的CPU架构越多兼容性越好。（不用目录的.so库数量一定要一样，不然会出现找不到库的Bug，具体原因见–<a href="https://zhuanlan.zhihu.com/p/21359984" target="_blank" rel="noopener">与.so有关的大坑</a>）</p>
+<p>针对于安卓平台上7中cpu指令集，以及其各自的兼容性，参见<a href="https://www.jianshu.com/p/9532911ecc8b" target="_blank" rel="noopener">为何Twitter区别于微信、淘宝，只使用了armeabi-v7a？</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/09/04/安卓上为什么不能运行64位LuaJIT字节码/" data-id="cjlmkfhkq0000xopq2bucfzmg" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/08/29/移动平台上使用LuaJIT字节码/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">移动平台上使用LuaJIT字节码</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/09/04/安卓上为什么不能运行64位LuaJIT字节码/">安卓上为什么不能运行64位LuaJIT字节码</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/移动平台上使用LuaJIT字节码/">移动平台上使用LuaJIT字节码</a>
+          </li>
+        
+          <li>
+            <a href="/2018/06/06/新季度的一点小想法/">新季度的一点小想法</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/01/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Onez<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
