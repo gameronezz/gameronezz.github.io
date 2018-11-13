@@ -1,0 +1,266 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Unity | Onez的游戏开发笔记</title>
+  <meta name="author" content="Onez">
+  
+  <meta name="description" content="Have a good life">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Unity"/>
+  <meta property="og:site_name" content="Onez的游戏开发笔记"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Onez的游戏开发笔记" type="application/atom+xml">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<link rel="stylesheet" href="/css/style.css">
+  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-368771XX-X']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+
+<body>
+  <header id="header" class='normal_mode'>
+    <nav id="main-nav">
+  <ul class='container'>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+  </header>
+  <div id="content" class="container">
+    <article class="[文档学习]new">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+    <header>
+      
+      <time datetime="2018-11-13T17:17:25.000Z"><a href="/2018/11/14/[文档学习]New Best Practice Guide – Memory Management in Unity/">Wed, Nov 14 2018, 1:17:25 am</a></time>
+
+  
+    <h1 class="title">Unity</h1>
+  
+
+
+
+<div class="clear"></div>
+      
+    </header>
+    <div class="entry">
+      
+        <p>原文地址：<a href="https://blogs.unity3d.com/cn/2018/06/27/new-best-practice-guide-memory-management-in-unity/" target="_blank" rel="noopener">New Best Practice Guide – Memory Management in Unity</a></p>
+<p><a href="https://unity3d.com/cn/learn/tutorials/topics/best-practices/managed-memory?playlist=30089" target="_blank" rel="noopener">Managed Memory</a></p>
+<p>理解Managed Heap是Unity内存管理的基本要素，获取更多关于managed memory 和如何优化内存的信息，请参见<a href="https://docs.unity3d.com/Manual/BestPracticeUnderstandingPerformanceInUnity4-1.html?_ga=2.47614311.1726335698.1542012448-1781248738.1542012448" target="_blank" rel="noopener">Understanding the managed heap</a> 中的 <a href="https://docs.unity3d.com/Manual/BestPracticeUnderstandingPerformanceInUnity2.html?_ga=2.47614311.1726335698.1542012448-1781248738.1542012448" target="_blank" rel="noopener">Understanding Optimization in Unity guide.</a></p>
+<h3 id="Assets"><a href="#Assets" class="headerlink" title="Assets"></a>Assets</h3><p>Assets 产生了 <a href="https://unity3d.com/cn/learn/tutorials/topics/best-practices/native-memory#Assets" target="_blank" rel="noopener">native memory</a> 且在运行时影响Managed memory. Unity 运行时不会为了复用内存而去归还 Managed memory 给操作系统，直到用户关掉应用程序。Managed heap会随着内存碎片化和可用内存用尽而增大。由于这是一个不可预测的行为，所以了解Assets是如何占用Managed memory是很关键的。</p>
+<ul>
+<li>使用Destroy(myObject)去销毁一个Object和释放它占用的内存，这样做是标记一个Object为null而不是真正销毁了它。真正的销毁是在当前这一帧的Update结束后再销毁物体。</li>
+<li>你需要设置 peristent（long-term ）Object 为一个类对象，而 ephemeral（short-term）Object为栈对象。栈对象不会再堆上去申请的内存，也不会产生需要回收的垃圾。</li>
+<li>复用 temporary work buffers 来保持临时内存的低量而不是经常性的分配内存。</li>
+<li>当Enumerator退出时，不会清理掉它的内存。</li>
+<li>你需要避免不结束的协程，特别是在协程中申请的大量内存的。协程将会被存在管理堆上的申请的一个栈中，直到协程结束。</li>
+<li></li>
+</ul>
+<h3 id="Understanding-the-managed-heap"><a href="#Understanding-the-managed-heap" class="headerlink" title="Understanding the managed heap"></a>Understanding the managed heap</h3><p>许多Unity开发者面对的另一类常见问题是非预期的Managed heap扩张。 在Unity中，Managed heap的扩张比缩减更加容易，此外，Unity的垃圾回收策略是趋向于碎片化内存的，这将阻止大块堆内存的缩减。</p>
+<h4 id="How-the-managed-heap-operates-and-why-it-expands"><a href="#How-the-managed-heap-operates-and-why-it-expands" class="headerlink" title="How the managed heap operates and why it expands"></a>How the managed heap operates and why it expands</h4><h4 id="Managed-heap是如何运行的，它是如何扩张的。"><a href="#Managed-heap是如何运行的，它是如何扩张的。" class="headerlink" title="Managed heap是如何运行的，它是如何扩张的。"></a>Managed heap是如何运行的，它是如何扩张的。</h4><p>“Managed heap” 是一块被工程脚本代码运行时的内存管理器自动管理的内存（Mono或IL2CPP）。所有被managed code创建的Objects必须在managed heap上被分配（注意：严格的说，所有非空引用类型对象和所有装箱过的值类型对象必须在Managed heap上被分配）。</p>
+<p>垃圾回收器会定期运行（注意：具体的运行周期是平台相关的），它将会遍历所有在Heap上的内存对象，将不再被引用的对象标记为删除。不被引用的对象将会被删除，释放内存。</p>
+<p>至关重要的是，Unity的内存回收-使用的<a href="https://en.wikipedia.org/wiki/Boehm_garbage_collector" target="_blank" rel="noopener">Boechm GC算法</a>-是使用的non-generational 和 non-compacting. “non-generational”意味着GC在执行收集操作时必须遍历整个heap,GC时的性能会随着heap的扩张而下降。”Non-compacting”意味着内存中的对象不会为了减少对象之间的内存间隙而重新定位。</p>
+<p>当一个对象被释放的时候，空余出来的空间不会成为一块单独的空余内存的一部分。这块内存的每一侧都仍然被占用。基于这样的情况，空闲内存成为了其他正在被占用内存的gap。这块空间只能用来存储相同大小或者尺寸小于这块内存大小的对象使用。</p>
+<p>当分配内存给Object时。记住单个对象必须占据一块连续的内存块。</p>
+<p>这引发出了一个内存碎片化的核心问题：虽然堆的整体大小可能是合适的，但是存在一种可能，某些或者所有的内存空间都是在分配过的Objects之间的“gaps”。这种情况下，虽然堆的总空间可能是足够分配的。但是managed heap找不到一个足够大的连续内存空间来分配。</p>
+<p>所以当上述情况产生时， Unity memory manager将会执行两块操作。</p>
+<p>首先，如果还没有这样做的话，将会触发垃圾收集器运行，试图清理回收足够的内存空间来满足内存分配的请求。</p>
+<p>如果在垃圾收集器运行后，依旧没有足够的连续内存空间，那么heap必须拓展。Heap的扩大大小依赖于平台。当然，大多数Unity平台会讲managed heap大小增大一倍。</p>
+<h3 id="Key-problems-with-the-heap"><a href="#Key-problems-with-the-heap" class="headerlink" title="Key problems with the heap"></a>Key problems with the heap</h3><p>以下问题会随着Managed heap 扩张而更严重。</p>
+<ul>
+<li>当Managed Heap扩张时，Unity不会经常释放那些从托管堆中分配的内存页。即使有一大部分空间已经空闲，Unity也会乐观的持有heap，这是为了避免heap再进一步申请扩大。</li>
+<li>在绝大多数平台上，Unity最终还是会释放空闲的Managed Heap内存页给操作系统的，这个释放间隔是不能保证且不能依赖的。</li>
+<li>Managed heap使用的地址空间是绝不能归还给操作系统的。</li>
+<li>32位程序来说，Managed Heap多次扩大和收缩这可能导致地址空间耗尽，如果一个程序的可用内存地址空间已经耗尽，操作系统将会终止这个程序。</li>
+<li>对于64位程序来说，地址空间是一个极度充足的，不太可能发生以上情况。</li>
+</ul>
+<h3 id="Temporary-allocations"><a href="#Temporary-allocations" class="headerlink" title="Temporary allocations"></a>Temporary allocations</h3><p>许多Unity工程被发现每帧会向managed heap临时申请几十上百Kb的内存。这常常会极端影响到工程的性能。请考虑一下建议。</p>
+<p>如果一个程序程序每帧分配1kb的临时内存，然后帧率为64fps，那么一分钟将会产生3.6M的内存用量，每分钟都触发垃圾回收看上去会非常影响性能。但是每分钟申请3.6m的临时内存在试图跑在某些低内存机器上时是非常有问题的。</p>
+<p>进一步来说，考虑到加载操作，如果在一个沉重的Asset加载操作中产生了大量的临时对象，然后这些对象直到加载完成都仍然被引用着。gc将不能够释放这些临时对象，然后managed heap需要拓展即使大多数的对象马上就要被释放。</p>
+<p>保持对内存分配的关注是相对来说比较简单。Profiler有一个””GC Allow”的条目，它将展示在特定帧向managed heap申请了多少内存的分配（注意：这里只是展示特定帧的内存分配）。“Deep Profiling” 开启时，甚至可以定位到是哪一个函数申请到的内存。</p>
+<h3 id="Basic-Memory-conservartion"><a href="#Basic-Memory-conservartion" class="headerlink" title="Basic Memory conservartion"></a>Basic Memory conservartion</h3><h4 id="集合和数组重用"><a href="#集合和数组重用" class="headerlink" title="集合和数组重用"></a>集合和数组重用</h4><p>当使用C#的值类型集合和数组时，考虑重用或者使用池来在需要时循环。只在回收时清空集合里面的值。</p>
+<h4 id="闭包和匿名函数"><a href="#闭包和匿名函数" class="headerlink" title="闭包和匿名函数"></a>闭包和匿名函数</h4><p>以下有两点是在使用闭包和匿名函数时需要考虑的。</p>
+<p>首先，所有的函数类型在C#中都是引用类型，然后它们当然也都是由堆来分配内存。传递函数引用作为参数是会十分轻易的产生临时内存申请请求。在函数被当做匿名函数传递或者说是已经预定义好的情况下都会产生内存分配。</p>
+<p>当一个匿名函数需要访问函数外部的变量时，这个匿名函数称为了闭包。</p>
+<p>C#为了实现这个机制，C#生成了一个匿名类来包含这个外部变量，当这个闭包被传递的时候，匿名类的实例化拷贝就被实例化了出来。</p>
+<p>一般来说，C#中尽量避免闭包，匿名方法和方法引用应该最为性能敏感型代码而被最小化。特别是在每帧执行的代码中。</p>
+<h4 id="IL2CPP下的匿名函数"><a href="#IL2CPP下的匿名函数" class="headerlink" title="IL2CPP下的匿名函数"></a>IL2CPP下的匿名函数</h4><h4 id="装箱"><a href="#装箱" class="headerlink" title="装箱"></a>装箱</h4><p>定义省略。。。</p>
+<p>C# IDE和编译器并不警报装箱这个问题，即使它可能导致无法预测的内存分配。这是因为c#发展时假定了少量的临时内存分配将有效的被GC和内存池处理。</p>
+<h4 id="定义装箱"><a href="#定义装箱" class="headerlink" title="定义装箱"></a>定义装箱</h4><p>略</p>
+<h4 id="字典和枚举"><a href="#字典和枚举" class="headerlink" title="字典和枚举"></a>字典和枚举</h4><p>一个通常由使用枚举而产生装箱的行为是作为字典的key。生命枚举类型时兼顾会创建一个新的值类型，然后它在之后的场景中将会按照整形得来对待。但是在编译时将会强制按照类型安全来对待。</p>
+<p>默认情况下.dictionary.add将会默认调用一下object.getHashCode(object)。这个方法被用于获得字典key的哈希码。一些其他的接受key作为参数的方法同上。调用一次至少会触发一次key的装箱。</p>
+<p>为了解决这个问题，非常必要的是为IEqualityComparer<myenum>重新实现以下GetHashCode这个方法。作为字典的比较器。</myenum></p>
+<h4 id="Foreach-循环"><a href="#Foreach-循环" class="headerlink" title="Foreach 循环"></a>Foreach 循环</h4><h4 id="值类型数组的Unity-API"><a href="#值类型数组的Unity-API" class="headerlink" title="值类型数组的Unity API"></a>值类型数组的Unity API</h4><h4 id="空数组重用"><a href="#空数组重用" class="headerlink" title="空数组重用"></a>空数组重用</h4><h5 id="脚注"><a href="#脚注" class="headerlink" title="脚注"></a>脚注</h5>
+      
+    </div>
+    <footer>
+      
+          
+<!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <span class="jiathis_txt">分享到：</span>
+  <a class="jiathis_button_weixin">微信</a>
+  <a class="jiathis_button_tsina">新浪微博</a>
+  <a class="jiathis_button_renren">人人网</a>
+  <a class="jiathis_button_qzone">QQ空间</a>
+  <a class="jiathis_button_douban">豆瓣</a>
+  <a class="jiathis_button_pocket">Pocket</a>
+  <a href="http://www.jiathis.com/share?uid=901656" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" src="http://v3.jiathis.com/code_mini/jia.js?uid=901656" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+          <div class="clearfix"></div>
+          <nav id="pagination">
+  
+  
+    <a href="/2018/09/04/安卓上为什么不能运行64位LuaJIT字节码/" class="alignright next">Prev<i class="fa fa-long-arrow-right"></i></a>
+  
+  <div class="clearfix"></div>
+</nav>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+
+  
+      <!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread" data-thread-key="/2018/11/14/[文档学习]New Best Practice Guide – Memory Management in Unity/"></div>
+<!-- Duoshuo Comment END -->
+  
+</section>
+
+
+
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div>
+  
+  &copy; 2018 Onez
+  
+</div>
+Powered by <a href="http://zespia.tw/hexo/" title="Hexo" target="_blank" rel="noopener">Hexo</a> and <a href="http://pages.github.com/" title="GitHub Pages" target="_blank" rel="noopener">GitHub Pages</a>
+
+<div class="clearfix"></div></footer>
+  
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+
+
+
+
+    <script type="text/javascript">
+        (function(){
+
+            $(window).scroll(function(){
+
+                var scrollTop = $(window).scrollTop();
+                if ( scrollTop >200 ){
+                    $("#main-nav").removeClass('normal_mode').addClass('top_mode');
+                } else{
+                    $("#main-nav").removeClass('top_mode').addClass('normal_mode');
+                }
+
+            });
+
+        })();
+    </script>
+
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox({
+      'titlePosition': 'inside'
+    });
+  })(jQuery);
+  </script>
+
+
+
+    
+    <script type="text/javascript">
+      var duoshuoQuery = {short_name:"onezz"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = 'http://static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0] 
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+
+
+<script type="text/javascript">
+  
+  $(function(){
+
+    $('.title').hover(
+      function() {      
+        $(this).stop().animate(
+          {'marginLeft': '10px'}, 200
+        );   
+      }, 
+      function() {       
+        $(this).stop().animate({'marginLeft': '0px'}, 200);      
+      
+    });   
+
+  });
+
+</script>
+
+
+</body>
+</html>
