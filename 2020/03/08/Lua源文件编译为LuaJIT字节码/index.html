@@ -1,93 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Lua源文件编译为LuaJIT字节码 | Onez‘s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Onez">
+  <meta name="keywords" content="Unity, Motocycle, Life">
+  <meta name="description" content="Unity3D Programmer，Motorcycle Rider">
+  <script id="hexo-configurations">
+  var CONFIG = {
+    root: '/',
+    theme: 'blleng',
+    version: '0.2.2',
+    localsearch:{
+      "enable": false,
+      "trigger": "auto",
+      "top_n_per_article": 1,
+      "unescape": false,
+      "preload": false
+      },
+    path: '-'
+  };
+</script>
 
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/main.css">
+  <script src="//cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
+  <script src="/js/jquery.jside.menu.js"></script>
+	<script>
+	$(document).ready(function(){
+	$(".menu-container").jSideMenu({
+	    jSidePosition: "position-right",
+	    jSideSticky: true,
+	    jSideSkin: "endless-river",
+	     });
+	}); 
+	</script>
   
-  <title>Lua源文件编译为LuaJIT字节码 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="早就听闻LuaJIT字节码有很好的代码保护措施，而且还可以加快代码的加载速度，趁着项目中期不太忙的时候，抽空做看了一下LuaJIT如何使用字节码。 顺便吐槽一下，公司之前那么多cocos项目，居然一个使用字节码的都没有，很好奇他们的项目是怎么做的客户端加密，哈哈。 我们项目是Unity3d项目，使用的xLua做热更方案。不过字节码这一块跟使用什么框架没有关系，官方文档说，字节码（bytecode）">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Lua源文件编译为LuaJIT字节码">
-<meta property="og:url" content="http://yoursite.com/2020/03/08/Lua%E6%BA%90%E6%96%87%E4%BB%B6%E7%BC%96%E8%AF%91%E4%B8%BALuaJIT%E5%AD%97%E8%8A%82%E7%A0%81/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="早就听闻LuaJIT字节码有很好的代码保护措施，而且还可以加快代码的加载速度，趁着项目中期不太忙的时候，抽空做看了一下LuaJIT如何使用字节码。 顺便吐槽一下，公司之前那么多cocos项目，居然一个使用字节码的都没有，很好奇他们的项目是怎么做的客户端加密，哈哈。 我们项目是Unity3d项目，使用的xLua做热更方案。不过字节码这一块跟使用什么框架没有关系，官方文档说，字节码（bytecode）">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-03-08T07:10:10.000Z">
-<meta property="article:modified_time" content="2020-03-08T07:10:37.888Z">
-<meta property="article:author" content="John Doe">
-<meta name="twitter:card" content="summary">
-  
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  
-    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  
-  
-<link rel="stylesheet" href="/css/style.css">
-
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Fira Code:300,300italic,400,400italic,700,700italic|Noto Serif SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
 <meta name="generator" content="Hexo 4.2.0"></head>
-
 <body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
+<div class="single">
+<div id="page">
+<div id="lx-aside" style="background-image: url(/images/page-cover.jpg)" data-stellar-background-ratio="0.5">
+  <div class="overlay">
+  <div class="page-title">
+    <div class="avatar"><a href="/"><img src="/images/person_1.jpg"></a></div>
+    <span>2020-03-08</span>
+    <h2>Lua源文件编译为Lua...</h2>
+    
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
-      </div>
-    </div>
-  </div>
-</header>
-      <div class="outer">
-        <section id="main"><article id="post-Lua源文件编译为LuaJIT字节码" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/03/08/Lua%E6%BA%90%E6%96%87%E4%BB%B6%E7%BC%96%E8%AF%91%E4%B8%BALuaJIT%E5%AD%97%E8%8A%82%E7%A0%81/" class="article-date">
-  <time datetime="2020-03-08T07:10:10.000Z" itemprop="datePublished">2020-03-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      Lua源文件编译为LuaJIT字节码
-    </h1>
-  
+</div>
+</div>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
+<div id="lx-main-content">
+  <div class="lx-post">
+    <div class="lx-entry padding">
+      <div>
         <p>早就听闻LuaJIT字节码有很好的代码保护措施，而且还可以加快代码的加载速度，趁着项目中期不太忙的时候，抽空做看了一下LuaJIT如何使用字节码。</p>
 <p>顺便吐槽一下，公司之前那么多cocos项目，居然一个使用字节码的都没有，很好奇他们的项目是怎么做的客户端加密，哈哈。</p>
 <p>我们项目是Unity3d项目，使用的xLua做热更方案。不过字节码这一块跟使用什么框架没有关系，官方文档说，字节码（bytecode）和源码（sourcecode）在使用上是没有区别的。所以不考虑32位移动平台的话，在框架和业务层面无需改动任何东西。</p>
@@ -97,6 +68,7 @@
 <h5 id="1-重新编译LuaJIT解释器"><a href="#1-重新编译LuaJIT解释器" class="headerlink" title="1. 重新编译LuaJIT解释器"></a>1. 重新编译LuaJIT解释器</h5><p> LuaJIT默认生成的字节码是32位的，如果在64位的ios机器上直接读取的话，会一个报错。针对这个种情况，而作者在2015年8月对LuaJIT做了一个<a href="https://github.com/LuaJIT/LuaJIT/issues/25" target="_blank" rel="noopener">更新</a>，增加了LJ_GC64模式，这样我们可以重新编译LuaJIT解释器来生成64位的字节码。</p>
 <p>过程很简单，只需要在 make 命令后加上一个参数即可。如下是mac os上编译LuaJIT解释器的命令。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 控制台定位到LuaJIT解释器所在目录</span><br><span class="line">cd LuaJIT-2.1.0-beta2</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 编译 32 位 LuaJIT 解释器  </span><br><span class="line">make </span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 编译 64 位 LuaJIT 解释器</span><br><span class="line">make CFLAGS&#x3D;-DLUAJIT_ENABLE_GC6</span><br></pre></td></tr></table></figure>
+
 
 <h5 id="2-生成32-64位字节码"><a href="#2-生成32-64位字节码" class="headerlink" title="2. 生成32/64位字节码"></a>2. 生成32/64位字节码</h5><p>有了32/64位的LuaJIT解释器之后，我们就可以按照<a href="http://luajit.org/running.html" target="_blank" rel="noopener">官方流程</a>来生成LuaJIT来生成平台兼容的字节码了。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 控制台定位到LuaJIT解释器所在目录</span><br><span class="line">cd LuaJIT-2.1.0-beta2</span><br></pre></td></tr></table></figure>
@@ -151,109 +123,116 @@
 <p><a href="http://bengyuejiejie.github.io/blog/2015/03/09/first-blog/" target="_blank" rel="noopener">关于Xcode “Build Setting”中的Architectures详解</a></p>
 <p><a href="https://blog.csdn.net/u012964796/article/details/50410420" target="_blank" rel="noopener">手机CPU各大厂商以及手机 cpu架构体系分类</a></p>
 
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/03/08/Lua%E6%BA%90%E6%96%87%E4%BB%B6%E7%BC%96%E8%AF%91%E4%B8%BALuaJIT%E5%AD%97%E8%8A%82%E7%A0%81/" data-id="ck7ipb4jd00001s3h1fpwhxme" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-    
-<nav id="article-nav">
-  
-  
-    <a href="/2020/03/05/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Singleton/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">[学习笔记]设计模式-Singleton</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2020/03/08/Lua%E6%BA%90%E6%96%87%E4%BB%B6%E7%BC%96%E8%AF%91%E4%B8%BALuaJIT%E5%AD%97%E8%8A%82%E7%A0%81/">Lua源文件编译为LuaJIT字节码</a>
-          </li>
-        
-          <li>
-            <a href="/2020/03/05/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Singleton/">[学习笔记]设计模式-Singleton</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
       </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 John Doe<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
+  </div>
+</div>
+<div class="lx-navigation">
+	<div class="lx-cover prev lx-cover-sm" style="background-image: url(/images/footer_1.jpg)">
+		<div class="overlay"></div>
+		<a class="copy" href="#">
+			<div class="display-t">
+				<div class="display-tc">
+					<div>
+						<span>Next</span>
+						<h3>没有更新的文章</h3>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+        <div class="lx-cover next lx-cover-sm" style="background-image: url(/images/footer_2.jpg)">
+		<div class="overlay"></div>
+		<a class="copy" href="/2020/03/05/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Singleton/">
+			<div class="display-t">
+				<div class="display-tc">
+					<div>
+						<span>Prev</span>
+						<h3>[学习笔记]设...</h3>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+</div>
+
+</div>
+
+<footer>
+  <div>
+  Copyright &copy; 2019.<a href="/">Onez‘s Blog</a><br>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme <a href="https://lx.blleng.cn" target="_blank">Lx</a><br>
   </div>
 </footer>
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
+</div>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-
-
-  
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-
-  
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
+<button class="menu-trigger"></button>
+<div class="menu">
+  <div class="menu-head">
+    <span class="layer">
+      <div class="col">
+        <div class="row for-pic">
+          <div class="profile-pic">
+            <a href="/"><img src="/images/person_1.jpg" alt="Onez"/></a>
+          </div>
+        </div>
+        <div class="row for-name">
+          <p>Onez</p>
+          <span class="tagline">Hello, World!</span>
+        </div>
+      </div>
+    </span>
   </div>
+  <nav class="menu-container">
+  <ul class="menu-items">
+    <li><a href="/"><i class="fa fa-home fa-fw"></i>首页</a></li>
+    <li><a href="/archives/"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+    <li class="has-sub"><span class="dropdown-heading">
+      <i class="fa fa-bookmark fa-fw"></i>页面</span>
+        <ul>
+          <li><a href="/guestbook">留言</a></li>
+        <li><a href="/about">关于</a></li>
+        </ul>
+    </li>
+    <li class="has-sub"><span class="dropdown-heading">
+      <i class="fa fa-link fa-fw"></i>友链</span>
+        <ul>
+          <li> <a href="https://lx.blleng.cn" target="_blank">Theme-Lx</a></li>
+        </ul>
+    </li>
+  </ul>
+  </nav>
+</div>
+
+<div class="gototop js-top">
+  <a href="#" class="js-gotop"><i class="fa fa-arrow-up"></i></a>
+</div>
+<script src="/js/jquery.easing.min.js"></script>
+<script>
+(function () {
+	"use strict";
+	var goToTop = function() {
+		$(".js-gotop").on("click", function(event){
+			event.preventDefault();
+			$("html, body").animate({
+				scrollTop: $("html").offset().top
+			}, 500, "easeInOutExpo");
+			return false;
+		});
+		$(window).scroll(function(){
+			var $win = $(window);
+			if ($win.scrollTop() > 200) {
+				$(".js-top").addClass("active");
+			} else {
+				$(".js-top").removeClass("active");
+			}
+		});
+	};
+	$(function(){
+		goToTop();
+	});
+}());
+</script>
+
+
 </body>
 </html>
