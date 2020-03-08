@@ -5,13 +5,17 @@
   
 
   
-  <title>Hexo</title>
+  <title>Lua源文件编译为LuaJIT字节码 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="早就听闻LuaJIT字节码有很好的代码保护措施，而且还可以加快代码的加载速度，趁着项目中期不太忙的时候，抽空做看了一下LuaJIT如何使用字节码。 顺便吐槽一下，公司之前那么多cocos项目，居然一个使用字节码的都没有，很好奇他们的项目是怎么做的客户端加密，哈哈。 我们项目是Unity3d项目，使用的xLua做热更方案。不过字节码这一块跟使用什么框架没有关系，官方文档说，字节码（bytecode）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lua源文件编译为LuaJIT字节码">
+<meta property="og:url" content="http://yoursite.com/2020/03/08/Lua%E6%BA%90%E6%96%87%E4%BB%B6%E7%BC%96%E8%AF%91%E4%B8%BALuaJIT%E5%AD%97%E8%8A%82%E7%A0%81/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="早就听闻LuaJIT字节码有很好的代码保护措施，而且还可以加快代码的加载速度，趁着项目中期不太忙的时候，抽空做看了一下LuaJIT如何使用字节码。 顺便吐槽一下，公司之前那么多cocos项目，居然一个使用字节码的都没有，很好奇他们的项目是怎么做的客户端加密，哈哈。 我们项目是Unity3d项目，使用的xLua做热更方案。不过字节码这一块跟使用什么框架没有关系，官方文档说，字节码（bytecode）">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-03-08T07:10:10.000Z">
+<meta property="article:modified_time" content="2020-03-08T07:10:37.888Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -62,9 +66,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-Lua源文件编译为LuaJIT字节码" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-Lua源文件编译为LuaJIT字节码" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/03/08/Lua%E6%BA%90%E6%96%87%E4%BB%B6%E7%BC%96%E8%AF%91%E4%B8%BALuaJIT%E5%AD%97%E8%8A%82%E7%A0%81/" class="article-date">
   <time datetime="2020-03-08T07:10:10.000Z" itemprop="datePublished">2020-03-08</time>
@@ -77,8 +79,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/08/Lua%E6%BA%90%E6%96%87%E4%BB%B6%E7%BC%96%E8%AF%91%E4%B8%BALuaJIT%E5%AD%97%E8%8A%82%E7%A0%81/">Lua源文件编译为LuaJIT字节码</a>
+    <h1 class="article-title" itemprop="name">
+      Lua源文件编译为LuaJIT字节码
     </h1>
   
 
@@ -158,95 +160,19 @@
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-学习笔记-设计模式-Singleton" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/03/05/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Singleton/" class="article-date">
-  <time datetime="2020-03-05T15:54:59.000Z" itemprop="datePublished">2020-03-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/05/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Singleton/">[学习笔记]设计模式-Singleton</a>
-    </h1>
+    <a href="/2020/03/05/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Singleton/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[学习笔记]设计模式-Singleton</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Singleton</p>
-<p>核心：控制某个类型的实例数量是唯一一个。同时为客户程序提供一个访问它的全局访问点。由于类可以被继承，因此Singleton要保证“对外非直接/或间接继承关系”提供一个统一的访问点。</p>
-<pre><code>静态的全局变量其实只是提供全局访问的一个技巧，但是不能真正的限制客户端程序实例的数量。</code></pre><p>说白了，Singleton模式要做的就是通过控制类型实例的创建，确保后续使用都是之前创建好的实例，通过这样的封装，客户程序就无需知道该类型实现的内部细节。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">基础范式</span><br><span class="line">Class Singleton</span><br><span class="line">&#123;</span><br><span class="line">    public static Singleton Instance()</span><br><span class="line">    &#123;</span><br><span class="line">        &#x2F;&#x2F; Lazy 方式创建唯一实例</span><br><span class="line">        &#x2F;&#x2F; 实例数量控制部分</span><br><span class="line">        if(_instance &#x3D;&#x3D; null) _instance &#x3D; new  Singleton();</span><br><span class="line">        </span><br><span class="line">        &#x2F;&#x2F; 全局访问入口</span><br><span class="line">        return _instance;</span><br><span class="line">    &#125;;</span><br><span class="line">    protected Singleton();</span><br><span class="line">    private static Singleton _instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>经典实现方式：</p>
-<ol>
-<li><p>外部方式</p>
-<p> 使用者在使用某些全局性（或语义上的全局性）的对象是，做“Try-Create-Store-Use”的工作。</p>
-</li>
-<li><p>内部方式</p>
-<p> 类型自己控制生成实例的数量，无论客户程序是否Try过了，类型自己就是一个实例，使用者从头到尾使用的都是这唯一实例。</p>
-</li>
-</ol>
-<p>以上实现方式可以满足最初的设计需求，但是多线程环境下，这种实现方式存在很多的缺陷。但是if语句完成的控制部分在多个县城几乎同时调用Singleton.Instance()时，有可能会被创建多次。最终_intance会被保存为，最后创建的那个实例。</p>
-<pre><code>这种方式非常不好复现，因为可能需要靠测试中的运气来触发。</code></pre><p>为此我们增加“double check”的校验机制</p>
-<hr>
-<p>自动更新的Singleton</p>
-<p>Singleton从经典实现开始就是一个持续存在的对象，但是实际操作中，持久不变的内容还是放到数据库，等持久化存储中更好一些。内存中的对象还是要被刷新的，工程中的Singleton的唯一实例很多时候也有类似需求。实现上更新触发的原因很多，像游戏中的话，就有可能来自于玩家的热重启，或者切换账户之类的操作。本质上是是一个来自外部的通知。</p>
-<hr>
-<p>从模式上可能引发漏洞的地方：</p>
-<h6 id="1-多线程情况下，对于GetInstance-中对于实例的数量控制代码可能会失效。"><a href="#1-多线程情况下，对于GetInstance-中对于实例的数量控制代码可能会失效。" class="headerlink" title="1. 多线程情况下，对于GetInstance()中对于实例的数量控制代码可能会失效。"></a>1. 多线程情况下，对于GetInstance()中对于实例的数量控制代码可能会失效。</h6><p>解决方案1：在原有控制语句的方案上，增加Lock的Double-Check, 并使用volatile关键字。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; voltatile关键字确保字段不受编译器优化，确保该字段在任何时间&#x2F;&#x2F;&#x2F; 内都是最新的值</span><br><span class="line">public static volatile Singleton; </span><br><span class="line"></span><br><span class="line">if( instance &#x3D;&#x3D; null )</span><br><span class="line">&#123;</span><br><span class="line">    lock(typeof(Singleton))</span><br><span class="line">        if( instance &#x3D;&#x3D; null)</span><br><span class="line">            instance &#x3D; new Singleton()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>解决方案2: 如果本身在构造过程中，不需要借鉴外部机制或者不需要准备很多构造参数，可以使用如下方式来实现线程安全。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">class Singleton</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F; 构造函数私有，客户程序和子类无法额外构造新的实例。</span><br><span class="line">    private Singleton() &#123;&#125;</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; 省去了laze的构造过程，Instance是类的公共静态成员，会在类第一次被用到的时候构造。</span><br><span class="line">    public static readonly Singleton Instance &#x3D; new Singleton();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h6 id="2-某些情况会导致Singleton模式变质。"><a href="#2-某些情况会导致Singleton模式变质。" class="headerlink" title="2. 某些情况会导致Singleton模式变质。"></a>2. 某些情况会导致Singleton模式变质。</h6><p>场景：比如实现ICloneable接口或即成自相关的子类，否则客户程序可以跳过私有构造函数，让编译器通过内存结构的复制来生成一个新的实例，从而导致并非单一实例存在。或者，通过给Singleton打上SerializableAttribute属性，而在事实上完成了对Singleton对象的拷贝。</p>
-<p>解决方案：Don’t do that</p>
-<hr>
-<p>Singleton的应用场景：</p>
-<p>1: 多线程情况下的共用一个Singleton实例</p>
-<p>2: 每个线程都有自己单独的Singleton对象</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 范式： winodws form适用， web form不适用</span><br><span class="line">&#x2F;&#x2F; 该标签说明每个Instance仅在当前线程内静态</span><br><span class="line">[ThreadStatic]</span><br><span class="line">private static Singleton instance;</span><br></pre></td></tr></table></figure>
-
-<p>3：暂时不讨论跨进程的Singleton，等遇到了再查阅资料吧。</p>
-<hr>
-<p>本质上 Singleton 是属于内存中的对象，并不是持续存在的。所以实际应用中，还是存在被刷新的情况。所以需要留有余地，提供外部/内部的刷新机制。</p>
-<hr>
-<p>Singleton的拓展 – Singleton-N：</p>
-<pre><code>对外只有一个全局访问接口，实际上类内部有N个实例对象在处理事务。</code></pre><hr>
-<p>Singleton的批量生产</p>
-<p>背景：项目内，我们可能需要使用工厂类型来实现Singleton的实例管理，并通过接口来规范统一的访问点等。</p>
-<p>如果按照经典方式定义的Singleton的话，不仅客户程序无法动态生成Singleton实例，外部工厂也生产不了，因为构造函数私有。</p>
-<p>可以适当放宽限制，通过工厂实现的Concrete Singleton跟工厂类型定义在同一个程序集中，Singleton的构造函数做到internal可见即可。</p>
-<hr>
-<p>总结：</p>
-<p>Singleton 更多的强调可构造的类型数量和唯一实力的方式，工程上实现Singleton的挑战主要来自于它的作用空间的同时需要保持Singleton的特质，随着应用的高可用性要求，部署环境中的Singleton需要在更广范围内保持其特性。</p>
-<p>理想与现实应用往往有冲突，为了避免过多的重复工作量，稍微放宽Singleton的构造限制有时候是需要纳入考虑的。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/03/05/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-Singleton/" data-id="ck7exqm870000243hdpwq9bqi" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
   
 </article>
-
-
-  
-
 
 </section>
         
